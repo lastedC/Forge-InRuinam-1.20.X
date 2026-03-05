@@ -1,7 +1,15 @@
 package net.lasted.inruinam;
 
 import com.mojang.logging.LogUtils;
+import net.lasted.inruinam.block.ModBlocks;
+import net.lasted.inruinam.block.entity.ModBlockEntities;
+import net.lasted.inruinam.item.CreativeTabs;
+import net.lasted.inruinam.item.ModItems;
+import net.lasted.inruinam.client.renderer.FlimsyChestRenderer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -26,6 +34,16 @@ public class InRuinam
     public InRuinam(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
+        // Register the creative mode tabs for the mod
+        CreativeTabs.register(modEventBus);
+
+        // Register the mod items
+        ModItems.register(modEventBus);
+        // Register the mod blocks
+        ModBlocks.register(modEventBus);
+        // Register the mod block entities
+        ModBlockEntities.register(modEventBus);
+
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -42,7 +60,9 @@ public class InRuinam
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
 
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -63,6 +83,10 @@ public class InRuinam
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+
+            event.enqueueWork(() -> {
+                BlockEntityRenderers.register(ModBlockEntities.FLIMSY_CHEST_BE.get(), FlimsyChestRenderer::new);
+            });
         }
     }
 }
